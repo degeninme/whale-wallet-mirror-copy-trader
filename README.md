@@ -38,7 +38,11 @@ When the wallet that turned $4k into $1.2M last cycle makes a move, you are in t
 
 ## ⚡ Live Mirror Execution Sample
 
-This is what the engine looks like in operation. Real format. Real structure. Not mocked.
+This is what the engine looks like in operation:
+
+![Whale Wallet Mirror — Demo in action](media.gif)
+
+Real format. Real structure. Not mocked.
 
 ```
 ═══════════════════════════════════════════════════════════════════════
