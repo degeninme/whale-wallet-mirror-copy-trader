@@ -18,9 +18,9 @@ class WalletTier(Enum):
     WATCH = "Watch"  # Monitor only, no mirror
 
 
-@dataclass
+@dataclass(slots=True)
 class DetectedSwap:
-    """A swap detected from a watched wallet."""
+    """A swap detected from a watched wallet. slots=True reduces memory footprint."""
     chain: Chain
     wallet_address: str
     tx_hash: str

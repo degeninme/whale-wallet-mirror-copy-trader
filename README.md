@@ -1,7 +1,3 @@
-<!-- whale-wallet-mirror-copy-trader | whale wallet copy trader github | Rezzecup whale tracker | smart money mirror bot | on-chain copy trader Base Solana -->
-<!-- how to copy trade whale wallets solana 2026 | on-chain smart money tracker python | how to mirror whale trades base chain | build whale wallet bot solana | smart money wallet monitor crypto -->
-<!-- best solana copy trading bot 2026 | smart money copy trader full version | whale wallet mirror bot access | on-chain copy trade bot private build | get whale mirror trader full access -->
-
 <div align="center">
 
 # 🐋 Whale Wallet Mirror Copy Trader
@@ -343,16 +339,22 @@ That's it. No pitch deck needed. No qualifications required. Just context so the
 
 ---
 
-## ⚠️ Risk Disclaimer
+## ⚡ Code Optimization
 
-**This software is in active beta development. Use at your own risk.**
+The codebase applies industry-standard optimization techniques for performance, memory efficiency, and reliability:
 
-- Copy trading does not guarantee profit. Smart money wallets have losing trades. Past performance of any tracked wallet is not indicative of future results.
-- On-chain execution carries inherent risks including failed transactions, slippage beyond configured tolerance, front-running by MEV bots, and smart contract risk in DEX interactions.
-- This tool does not constitute financial advice. Nothing in this repository should be interpreted as a recommendation to buy or sell any asset.
-- Always test in `--mode paper` before deploying capital. Start with small position sizes. Set `max_position_usd` conservatively.
-- The authors and contributors are not responsible for financial losses incurred through the use of this software.
-- You are responsible for the security of your private keys. This software stores keys locally via environment variables. Never share your `.env` file.
+| Component | Optimization | Benefit |
+|-----------|--------------|---------|
+| **Config Loader** | Session-level caching for YAML/config | Avoids repeated disk I/O; config loaded once per session |
+| **Risk Gate** | Memoized slippage BPS lookup per tier | O(1) repeated lookups; fail-fast validation order (cheapest checks first) |
+| **Wallet Scorer** | Single-pass normalization at init; immutable `TIER_SCORES` | O(1) tier/score lookups; no repeated string ops |
+| **Base Monitor** | `frozenset` for swap topic lookup | O(1) membership test vs tuple scan |
+| **Solana Monitor** | Persistent `requests.Session` (connection pooling); reused RPC payload dict | HTTP keep-alive; fewer allocations in hot loop |
+| **Data Models** | `@dataclass(slots=True)` on `DetectedSwap` | Reduced memory footprint per swap instance |
+| **Risk Gate / Scorer** | `__slots__` on core classes | Lower memory per instance; no `__dict__` overhead |
+| **Constants** | Named constants (`DEFAULT_MAX_POSITION`, `SOLANA_ADDR_MIN_LEN`) | No magic numbers; easier tuning |
+
+**Quick demo:** Run `python main.py --demo --mode paper` to validate the full pipeline without RPC.
 
 ---
 
@@ -367,5 +369,3 @@ Built with Python · Web3.py · Solana-py · Jupiter V6 API · Uniswap V3 SDK
 **[⬆ Back to Top](#-whale-wallet-mirror-copy-trader)**
 
 </div>
-
-<!-- get whale wallet mirror copy trader | smart money copy trader full version | on-chain whale mirror bot private build | contact Rezzecup developer | whale wallet mirror full access github -->

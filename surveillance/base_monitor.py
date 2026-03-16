@@ -1,6 +1,7 @@
 """
-Base chain wallet surveillance via Web3 eth_subscribe / block polling.
+Base chain wallet surveillance via Web3 block polling.
 Detects Uniswap V2/V3 swap events from watched wallets.
+Optimized: frozenset topic lookup O(1), single Web3 instance reuse.
 """
 
 import logging
@@ -15,10 +16,10 @@ from core.models import Chain, DetectedSwap
 
 logger = logging.getLogger(__name__)
 
-# Uniswap V2 Swap event: Swap(address,uint256,uint256,uint256,uint256,address)
-UNISWAP_V2_SWAP_TOPIC = "0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822"
-# Uniswap V3 Swap event
-UNISWAP_V3_SWAP_TOPIC = "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+# Uniswap V2/V3 Swap event topics — frozenset for O(1) membership test
+UNISWAP_V2_SWAP = "0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822"
+UNISWAP_V3_SWAP = "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+SWAP_TOPICS = frozenset((UNISWAP_V2_SWAP.lower(), UNISWAP_V3_SWAP.lower()))
 
 # Common Base DEXes (factory / router addresses can be used to find pools)
 # For logs we subscribe to specific pool addresses or use broader filter
@@ -58,11 +59,8 @@ class BaseMonitor:
                 topics = log.get("topics") or []
                 if len(topics) < 1:
                     continue
-                t0 = (topics[0] or "").hex() if isinstance(topics[0], bytes) else str(topics[0])
-                if t0.lower() not in (
-                    UNISWAP_V2_SWAP_TOPIC.lower(),
-                    UNISWAP_V3_SWAP_TOPIC.lower(),
-                ):
+                t0 = (topics[0] or b"").hex() if isinstance(topics[0], bytes) else str(topics[0])
+                if t0.lower() not in SWAP_TOPICS:
                     continue
                 data = log.get("data", "0x")
                 if isinstance(data, bytes):
@@ -109,10 +107,13 @@ class BaseMonitor:
                     if isinstance(tx, dict):
                         fr = tx.get("from")
                     else:
-                        fr = tx.from_
+                        fr = getattr(tx, "from_", None) or getattr(tx, "from", None)
                     if not fr:
                         continue
-                    addr = self.w3.to_checksum_address(fr) if fr else ""
+                    try:
+                        addr = self.w3.to_checksum_address(fr)
+                    except Exception:
+                        continue
                     if addr not in self.watchlist:
                         continue
                     tx_hash = tx.get("hash") if isinstance(tx, dict) else tx.hash

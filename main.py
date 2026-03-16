@@ -13,6 +13,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+# Constants — avoid magic numbers
+DEFAULT_MAX_POSITION = 500.0
+DEFAULT_MIRROR_SCALE = 0.08
+DEFAULT_MIN_SCORE = 65
+SOLANA_ADDR_MIN_LEN = 32
+
 from core.config_loader import load_config
 from core.decoder import decode_swap
 from core.models import Chain, DetectedSwap
@@ -41,11 +47,11 @@ def run_demo(settings: dict, wallet_tiers: dict, log_level: str, is_paper: bool)
     setup_logging(log_level)
     logger = logging.getLogger(__name__)
 
-    slippage = settings.get("slippage", {})
-    slippage_tiers = slippage
-    max_pos = float(settings.get("wallet", {}).get("max_position_usd", 500))
-    mirror_scale = float(settings.get("wallet", {}).get("mirror_scale", 0.08))
-    min_score = int(settings.get("watchlist", {}).get("min_score_to_mirror", 65))
+    wallet_cfg = settings.get("wallet", {})
+    slippage_tiers = settings.get("slippage", {}) or {}
+    max_pos = float(wallet_cfg.get("max_position_usd", DEFAULT_MAX_POSITION))
+    mirror_scale = float(wallet_cfg.get("mirror_scale", DEFAULT_MIRROR_SCALE))
+    min_score = int(settings.get("watchlist", {}).get("min_score_to_mirror", DEFAULT_MIN_SCORE))
 
     scorer = WalletScorer(wallet_tiers, min_score)
     risk_gate = RiskGate(max_position_usd=max_pos, min_score=min_score, slippage_tiers=slippage_tiers)
@@ -134,7 +140,7 @@ def main():
     except ImportError:
         pass
 
-    config_path = PROJECT_ROOT / args.config
+    config_path = (PROJECT_ROOT / args.config).resolve()
     if not config_path.exists():
         example = PROJECT_ROOT / "config" / "settings.example.yaml"
         if example.exists():
@@ -191,13 +197,13 @@ def main():
     solana_url = os.environ.get("SOLANA_RPC_URL") or rpc.get("solana", "")
     base_url = os.environ.get("BASE_RPC_URL") or rpc.get("base", "")
 
-    solana_wallets = [a for a in wallet_tiers if len(a) >= 32 and not a.startswith("0x")]
+    solana_wallets = [a for a in wallet_tiers if len(a) >= SOLANA_ADDR_MIN_LEN and not a.startswith("0x")]
     base_wallets = [a for a in wallet_tiers if a.startswith("0x")]
 
     slippage = settings.get("slippage", {})
-    max_pos = float(settings.get("wallet", {}).get("max_position_usd", 500))
-    mirror_scale = float(settings.get("wallet", {}).get("mirror_scale", 0.08))
-    min_score = int(settings.get("watchlist", {}).get("min_score_to_mirror", 65))
+    max_pos = float(settings.get("wallet", {}).get("max_position_usd", DEFAULT_MAX_POSITION))
+    mirror_scale = float(settings.get("wallet", {}).get("mirror_scale", DEFAULT_MIRROR_SCALE))
+    min_score = int(settings.get("watchlist", {}).get("min_score_to_mirror", DEFAULT_MIN_SCORE))
 
     scorer = WalletScorer(wallet_tiers, min_score)
     risk_gate = RiskGate(max_position_usd=max_pos, min_score=min_score, slippage_tiers=slippage)

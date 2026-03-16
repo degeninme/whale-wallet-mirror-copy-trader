@@ -2,11 +2,15 @@
 
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# Cache TTL: config files are typically static during a session
+_CONFIG_CACHE: dict = {}
+_CACHE_ENABLED = True
 
 
 def _load_dotenv() -> None:
@@ -20,23 +24,27 @@ def _load_dotenv() -> None:
         pass
 
 
-def load_yaml(path) -> dict:
-    """Load YAML file. Return empty dict if missing."""
+def load_yaml(path: Union[str, Path]) -> dict:
+    """Load YAML file. Return empty dict if missing. Uses minimal I/O."""
     p = Path(path) if not isinstance(path, Path) else path
     if not p.exists():
         return {}
-    with open(p) as f:
+    with open(p, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 
-def load_config(path: str, config_type: str = "settings") -> dict:
-    """Load config. config_type: 'settings' or 'wallets'."""
+def load_config(path: str, config_type: str = "settings", use_cache: bool = True) -> dict:
+    """Load config. config_type: 'settings' or 'wallets'. Cached for session."""
     p = Path(path)
     if not p.is_absolute():
-        p = PROJECT_ROOT / p
-    if config_type == "settings":
-        return load_settings(p)
-    return load_yaml(p)
+        p = (PROJECT_ROOT / p).resolve()
+    cache_key = (str(p), config_type)
+    if use_cache and _CACHE_ENABLED and cache_key in _CONFIG_CACHE:
+        return _CONFIG_CACHE[cache_key]
+    result = load_settings(p) if config_type == "settings" else load_yaml(p)
+    if use_cache and _CACHE_ENABLED:
+        _CONFIG_CACHE[cache_key] = result
+    return result
 
 
 def load_settings(config_path: Optional[Path] = None) -> dict:

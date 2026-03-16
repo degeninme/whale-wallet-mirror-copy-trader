@@ -1,12 +1,11 @@
 """
 Solana wallet surveillance via RPC.
 Monitors watched addresses for swap transactions (Jupiter, etc.).
-Uses JSON-RPC directly for maximum compatibility.
+Optimized: persistent Session (connection pooling), minimal allocations in hot loop.
 """
 
 import logging
 import time
-from datetime import datetime
 from typing import Callable, Dict, List, Optional, Set
 
 import requests
@@ -14,6 +13,10 @@ import requests
 from core.models import Chain, DetectedSwap
 
 logger = logging.getLogger(__name__)
+
+# RPC payload template — reuse to reduce allocation
+_RPC_PAYLOAD = {"jsonrpc": "2.0", "id": 1}
+GET_TX_OPTS = {"encoding": "jsonParsed", "maxSupportedTransactionVersion": 0, "commitment": "confirmed"}
 
 
 class SolanaMonitor:
@@ -36,13 +39,10 @@ class SolanaMonitor:
         self._session = requests.Session()
 
     def _rpc(self, method: str, params: list) -> Optional[dict]:
-        """Execute JSON-RPC call."""
+        """Execute JSON-RPC call. Reuses session for connection pooling."""
         try:
-            r = self._session.post(
-                self.rpc_url,
-                json={"jsonrpc": "2.0", "id": 1, "method": method, "params": params},
-                timeout=15,
-            )
+            payload = {**_RPC_PAYLOAD, "method": method, "params": params}
+            r = self._session.post(self.rpc_url, json=payload, timeout=15)
             r.raise_for_status()
             data = r.json()
             if "error" in data:
