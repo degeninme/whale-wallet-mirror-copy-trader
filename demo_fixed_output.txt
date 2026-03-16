@@ -1,0 +1,28 @@
+2026-03-16 01:10:47 [INFO] 🔍 MONITOR  Scanning wallets... (demo: 1 mock swap)
+2026-03-16 01:10:47 [INFO] 🚨 DETECTED Wallet: 7xKpm4E2...MPLE  |  Chain: SOLANA
+2026-03-16 01:10:47 [INFO]                Action  : SWAP
+2026-03-16 01:10:47 [INFO]                From    : 2.4 SOL  (~$400 USD)
+2026-03-16 01:10:47 [INFO]                To      : BONK (DezX...wFr9)
+2026-03-16 01:10:47 [INFO]                DEX     : Jupiter Aggregator v6
+2026-03-16 01:10:47 [INFO]                Slippage: 1.8%  |  Price Impact: 0.4%
+2026-03-16 01:10:47 [INFO] ⚙️  ENGINE  Risk check passed ✅  |  Position cap: $500
+2026-03-16 01:10:47 [INFO]                Sizing  : 0.08x mirror (scaled from source wallet)
+2026-03-16 01:10:47 [INFO]                Tier    : A
+2026-03-16 01:10:47 [INFO] 🔄 SUBMIT   Mirror tx constructed → (paper: no broadcast)
+2026-03-16 01:10:47 [INFO] [PAPER] Would mirror: 0.192 SOL -> 359041.76 BONK (DezX...wFr9) (scale 0.08x)
+2026-03-16 01:10:47 [INFO] ✅ FILLED   Tx: PAPER_3qVm9hJLEXAM  |  Filled: 0.19 SOL → 359042 BONK (DezX...wFr..
+2026-03-16 01:10:47 [INFO]                Latency : 2.1s (simulated)
+2026-03-16 01:10:47 [INFO]                Status  : CONFIRMED (paper)
+2026-03-16 01:10:47 [INFO] 📋 SUMMARY  Mirror #001 complete (demo)
+2026-03-16 01:10:47 [INFO]                Wallet rank  : A
+2026-03-16 01:10:47 [INFO]                Paper mode   : No real execution
+
+══════════════════════════════════════════════════════════════════════
+ WHALE WALLET MIRROR — DEMO EXECUTION (Paper Mode)
+ Chain: Solana Mainnet | Mode: DEMO | Session: 2026-03-16T01:10:47Z
+══════════════════════════════════════════════════════════════════════
+──────────────────────────────────────────────────────────────────────
+══════════════════════════════════════════════════════════════════════
+
+Demo complete. Run without --demo and with RPC endpoints for live surveillance.
+

@@ -1,0 +1,17 @@
+# config/wallets.yaml — Wallet watchlist
+# Add Solana and Base addresses under tier keys
+# Tiers: s (top), a, b. Score 0–100. Below min_score_to_mirror = monitor only
+
+solana:
+  tier_s: []
+  tier_a:
+    - "7xKpN9mR3f..."   # Replace with real addresses
+  tier_b: []
+  watch: []   # Monitor only, no execution
+
+base:
+  tier_s: []
+  tier_a:
+    - "0x3f8...b22A"   # Replace with real addresses
+  tier_b: []
+  watch: []

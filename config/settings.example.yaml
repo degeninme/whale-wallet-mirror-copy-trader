@@ -1,0 +1,33 @@
+# config/settings.yaml — Whale Wallet Mirror Copy Trader
+# Copy to settings.yaml and configure
+
+rpc:
+  solana: "https://api.mainnet-beta.solana.com"
+  base: "https://mainnet.base.org"
+
+wallet:
+  private_key_env: "WALLET_PRIVATE_KEY"
+  max_position_usd: 500
+  mirror_scale: 0.08
+
+slippage:
+  tier_s: 2.0
+  tier_a: 1.5
+  tier_b: 1.0
+  default: 0.8
+
+watchlist:
+  path: "config/wallets.yaml"
+  auto_score_interval_hours: 6
+  min_score_to_mirror: 65
+
+chains:
+  solana: true
+  base: true
+
+gas:
+  solana_priority_fee: "dynamic"
+  base_gas_multiplier: 1.25
+
+mode: paper
+log_level: INFO
