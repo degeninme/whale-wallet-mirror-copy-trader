@@ -1,38 +1,30 @@
 <div align="center">
 
-# 🐋 Whale Wallet Mirror Copy Trader
+# Whale Wallet Mirror Copy Trader for Solana and Base
 
-### *Stop watching. Start mirroring. Never miss a smart money move again.*
-
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![Web3.py](https://img.shields.io/badge/Web3.py-6.x-F16822?style=for-the-badge&logo=ethereum&logoColor=white)](https://web3py.readthedocs.io)
-[![Solana](https://img.shields.io/badge/Solana-Mainnet-9945FF?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com)
-[![Base](https://img.shields.io/badge/Base-Chain-0052FF?style=for-the-badge&logo=coinbase&logoColor=white)](https://base.org)
-[![Status](https://img.shields.io/badge/Status-Beta%20%7C%20Shipping%20Daily-orange?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-
-**[⚡ Live Mirror Feed](#-live-mirror-execution-sample) · [📊 How It Works](#-how-it-works) · [🆚 vs. The Alternatives](#-whale-wallet-mirror-copy-trader-vs-everything-else) · [🔧 Installation](#-installation) · [🔑 Full Version Access](#-want-the-full-private-build)**
-
----
-
-*A public demo exists. A private build executes faster.*
-*Serious traders already know which one they want. Keep reading.*
+### Track smart money wallets and automatically mirror on-chain swaps with configurable risk controls
 
 </div>
 
+
 ---
 
-## 🎯 What This Is (And What It Isn't)
+## What This Project Does
 
-**Whale Wallet Mirror Copy Trader** is an on-chain surveillance and execution engine that watches designated "Smart Money" wallets on **Base** and **Solana** simultaneously — and the moment one of them swaps, it fires an identical trade from your wallet with configurable slippage, gas priority, and position sizing.
+Whale Wallet Mirror Copy Trader is a **smart money wallet tracker and auto copy trading tool** for **Solana** and **Base**. It monitors selected on-chain wallets in real time, detects swap activity, scores wallet quality, and mirrors qualifying trades from your own wallet using configurable position sizing, slippage, and risk limits.
 
-This is not a signals dashboard. This is not a Telegram alert bot. This is not another Dune Analytics fork.
+This project is built for traders and developers who want more than wallet alerts. Instead of only showing what a whale wallet bought, it can turn that detected action into a mirrored execution workflow with **paper mode** and **live mode** support.
 
-This tool **executes**.
+Key capabilities include:
 
-When the wallet that turned $4k into $1.2M last cycle makes a move, you are in that trade within seconds — not minutes, not "after you check your phone" — **seconds**.
+- real-time wallet surveillance on Solana and Base
+- automatic mirror trading with proportional sizing
+- wallet scoring based on recency and win-rate signals
+- paper trading for safe testing
+- self-hosted setup with local control over keys and settings
 
-> Built for traders who have spent enough time watching alpha happen to someone else.
+
+If you are looking for a **whale wallet copy trader**, **smart money tracker**, or **on-chain mirror trading bot** for Base and Solana, this repository is the public beta.
 
 ---
 
