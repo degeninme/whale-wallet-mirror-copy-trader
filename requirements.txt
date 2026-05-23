@@ -1,7 +1,4 @@
-# Whale Wallet Mirror Copy Trader — Beta (v0.1.x–v0.3.x)
-# Python 3.11+
-
-# Base / Ethereum (Uniswap V2/V3)
+# Solana / Base chain
 web3>=6.0.0
 
 # HTTP
@@ -10,3 +7,8 @@ requests>=2.28.0
 # Config
 PyYAML>=6.0
 python-dotenv>=1.0.0
+
+# Dashboard backend
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+websockets>=12.0
