@@ -192,7 +192,8 @@ def startup_event():
 
     scorer = WalletScorer(wallet_tiers, min_score)
     risk_gate = RiskGate(max_position_usd=max_pos, min_score=min_score, slippage_tiers=slippage_tiers)
-    mirror_engine = MirrorEngine(mirror_scale=mirror_scale, is_paper=(mode == "paper"))
+    fixed_trade_usd = float(wallet_cfg_inner.get("fixed_trade_usd", 0)) or None
+    mirror_engine = MirrorEngine(mirror_scale=mirror_scale, is_paper=(mode == "paper"), fixed_trade_usd=fixed_trade_usd)
 
     # Start bot monitors in background threads if RPC URLs present
     rpc = settings.get("rpc", {})
