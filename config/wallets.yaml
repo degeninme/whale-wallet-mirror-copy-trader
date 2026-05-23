@@ -1,0 +1,17 @@
+solana:
+  tier_s:
+    - "95L1q614PkUfbE4E4tpQKnot4H6SzGXiFP8XUdn4WCi3"   # S1
+    - "4MNiUt5kptveg8HN2nmcmRzoVRThBFXoAtfFrbSdWvJR"   # S2
+    - "FFn8s7cj38ht2xpKr15K14LoMHCQ3EiDKDMda9mAZHcS"   # S3
+    - "mDR91ufq4S2uSHa9E2PYL7xg4LwcQXaQFP7YK864a1z"    # S4
+    - "8i2ruasBMLjyEmsWpoYNQbuEGsw2Qwov1ahZrvfffh2t"   # S5
+    - "DZsf9pAoKUGvC4aTAgoo1ccp9zZJD4kKddWvnooxdaaF"   # S6
+    - "AURAHBREynXnM8CoEfXisxNQWFYoMSH7gaCZqb63UNGf"   # S7
+    - "2K9KyJ2SSMgornoAK7X3sDGPT2kCoWci1zmxEtrnnTvo"   # S8
+    - "CxKFkAu8LngjYmcCjT2siKyAiMrKjbTB96NRXg8jqHH6"  # S9
+    - "GE6HuGQmq9KQYw3q3r6yJ4sN8FDDkcReLv7LS9TXXGd4"  # S10
+    - "CZkxyX3eAsdQgW6nuDdtsZrsQxXmiLMdPPoxqMGGhZrK"   # S11
+    - "3L5MjYPWpxT7qbeQAbtqEZTCsNysEbiT2Vj26nr7TsSY"   # S12
+    - "DVg3sAr3mpn93cQa2hRyyvkcmi5fb2vfixZdPdZ9rQBS"   # S13
+    - "E1zGzPY1WdJoHSzf928NWTkZjcAhnUaN1xzF6BhCTsvS"   # S14
+    - "Hxs4Lwre9LsyFbEnDR8Pviyvo1qdqZTrY1Xn176Ca478"   # S15
