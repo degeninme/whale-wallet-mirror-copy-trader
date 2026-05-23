@@ -140,15 +140,21 @@ class SolanaMonitor:
             else:
                 return None  # not a recognisable swap
 
-            # Rough USD estimate: 1 SOL ≈ $150 (placeholder; replace with price feed if needed)
-            SOL_PRICE_USD = 150.0
-            if from_mint == SOL_MINT:
-                from_usd = from_amt * SOL_PRICE_USD
-            else:
-                from_usd = 0.0   # unknown without price feed
+            # Skip plain SOL transfers (both sides SOL = not a swap)
+            if from_mint == SOL_MINT and to_mint == SOL_MINT:
+                return None
 
-            from_label = "SOL" if from_mint == SOL_MINT else (from_mint[:8] + "..." if len(from_mint) > 12 else from_mint)
-            to_label   = "SOL" if to_mint   == SOL_MINT else (to_mint[:8]   + "..." if len(to_mint)   > 12 else to_mint)
+            # USD estimate (1 SOL ≈ $150; replace with price feed for accuracy)
+            SOL_PRICE_USD = 150.0
+            from_usd = (from_amt * SOL_PRICE_USD) if from_mint == SOL_MINT else \
+                       (to_amt * SOL_PRICE_USD if to_mint == SOL_MINT else 0.0)
+
+            def _label(mint):
+                if not mint or mint == SOL_MINT: return "SOL"
+                return mint[:8] + "..." if len(mint) > 12 else mint
+
+            from_label = _label(from_mint)
+            to_label   = _label(to_mint)
 
             return DetectedSwap(
                 chain=Chain.SOLANA,
