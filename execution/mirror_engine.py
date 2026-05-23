@@ -1,5 +1,5 @@
 """
-Mirror engine — constructs mirror tx, applies proportional sizing, gas optimization.
+Mirror engine — constructs mirror tx, applies fixed or proportional sizing.
 Paper mode: simulates and logs. Live mode: builds and broadcasts.
 """
 
@@ -19,13 +19,22 @@ class MirrorEngine:
         self,
         mirror_scale: float,
         is_paper: bool,
+        fixed_trade_usd: Optional[float] = None,
         solana_executor: Optional[object] = None,
         base_executor: Optional[object] = None,
     ):
         self.mirror_scale = mirror_scale
         self.is_paper = is_paper
+        self.fixed_trade_usd = fixed_trade_usd   # if set, use this instead of mirror_scale
         self.solana_executor = solana_executor
         self.base_executor = base_executor
+
+    def _scale_amounts(self, swap: DetectedSwap):
+        """Return (scaled_from, scaled_to) based on fixed USD or mirror_scale."""
+        if self.fixed_trade_usd and swap.from_amount_usd and swap.from_amount_usd > 0:
+            ratio = self.fixed_trade_usd / swap.from_amount_usd
+            return swap.from_amount * ratio, swap.to_amount * ratio
+        return swap.from_amount * self.mirror_scale, swap.to_amount * self.mirror_scale
 
     def execute_mirror(
         self,
@@ -35,19 +44,15 @@ class MirrorEngine:
         """
         Execute or simulate mirror. Returns tx_hash if live, None if paper.
         """
-        scaled_from = swap.from_amount * self.mirror_scale
-        scaled_to = swap.to_amount * self.mirror_scale
+        scaled_from, scaled_to = self._scale_amounts(swap)
+        trade_usd = self.fixed_trade_usd or round(swap.from_amount_usd * self.mirror_scale, 2)
 
         if self.is_paper:
             from_disp = swap.from_token[:20] + ".." if len(swap.from_token) > 20 else swap.from_token
-            to_disp = swap.to_token[:20] + ".." if len(swap.to_token) > 20 else swap.to_token
+            to_disp   = swap.to_token[:20]   + ".." if len(swap.to_token)   > 20 else swap.to_token
             logger.info(
-                "[PAPER] Would mirror: %s %s -> %s %s (scale %.2fx)",
-                scaled_from,
-                from_disp,
-                scaled_to,
-                to_disp,
-                self.mirror_scale,
+                "[PAPER] Would mirror: %.4f %s -> %.2f %s (~$%.2f)",
+                scaled_from, from_disp, scaled_to, to_disp, trade_usd,
             )
             return None
 
