@@ -4,7 +4,7 @@ Paper mode: simulates and logs. Live mode: builds and broadcasts.
 """
 
 import logging
-from datetime import datetime
+import os
 from typing import Optional
 
 from core.models import Chain, DetectedSwap
@@ -20,14 +20,10 @@ class MirrorEngine:
         mirror_scale: float,
         is_paper: bool,
         fixed_trade_usd: Optional[float] = None,
-        solana_executor: Optional[object] = None,
-        base_executor: Optional[object] = None,
     ):
-        self.mirror_scale = mirror_scale
-        self.is_paper = is_paper
-        self.fixed_trade_usd = fixed_trade_usd   # if set, use this instead of mirror_scale
-        self.solana_executor = solana_executor
-        self.base_executor = base_executor
+        self.mirror_scale    = mirror_scale
+        self.is_paper        = is_paper
+        self.fixed_trade_usd = fixed_trade_usd
 
     def _scale_amounts(self, swap: DetectedSwap):
         """Return (scaled_from, scaled_to) based on fixed USD or mirror_scale."""
@@ -41,25 +37,43 @@ class MirrorEngine:
         swap: DetectedSwap,
         slippage_bps: int,
     ) -> Optional[str]:
-        """
-        Execute or simulate mirror. Returns tx_hash if live, None if paper.
-        """
+        """Execute or simulate mirror. Returns tx_hash if live, None if paper."""
         scaled_from, scaled_to = self._scale_amounts(swap)
-        trade_usd = self.fixed_trade_usd or round(swap.from_amount_usd * self.mirror_scale, 2)
+        trade_usd = self.fixed_trade_usd or round((swap.from_amount_usd or 0) * self.mirror_scale, 2)
 
         if self.is_paper:
             from_disp = swap.from_token[:20] + ".." if len(swap.from_token) > 20 else swap.from_token
             to_disp   = swap.to_token[:20]   + ".." if len(swap.to_token)   > 20 else swap.to_token
-            logger.info(
-                "[PAPER] Would mirror: %.4f %s -> %.2f %s (~$%.2f)",
-                scaled_from, from_disp, scaled_to, to_disp, trade_usd,
-            )
+            logger.info("[PAPER] Would mirror: %.4f %s -> %.2f %s (~$%.2f)",
+                        scaled_from, from_disp, scaled_to, to_disp, trade_usd)
             return None
 
-        if swap.chain == Chain.SOLANA and self.solana_executor:
-            return self.solana_executor.execute(swap, scaled_from, scaled_to, slippage_bps)
-        if swap.chain == Chain.BASE and self.base_executor:
-            return self.base_executor.execute(swap, scaled_from, scaled_to, slippage_bps)
+        # Live execution
+        if swap.chain == Chain.SOLANA:
+            from execution.jupiter_executor import execute_jupiter
+            wallet_pubkey = os.environ.get("WALLET_PUBLIC_KEY", "")
+            rpc_url       = os.environ.get("SOLANA_RPC_URL", "")
+            if not wallet_pubkey:
+                logger.error("WALLET_PUBLIC_KEY env var not set — cannot execute")
+                return None
+            result = execute_jupiter(
+                swap=swap,
+                wallet_pubkey=wallet_pubkey,
+                scaled_from_amount=scaled_from,
+                slippage_bps=slippage_bps,
+                mode="live",
+                rpc_url=rpc_url,
+            )
+            if result.success:
+                logger.info("[LIVE] Mirrored ~$%.2f: %s", trade_usd, result.tx_hash)
+                return result.tx_hash
+            else:
+                logger.error("[LIVE] Mirror failed: %s", result.error)
+                return None
 
-        logger.warning("No executor for chain %s", swap.chain)
+        if swap.chain == Chain.BASE:
+            logger.warning("Base execution not implemented yet")
+            return None
+
+        logger.warning("Unknown chain: %s", swap.chain)
         return None
