@@ -188,7 +188,7 @@ def startup_event():
     max_pos = float(wallet_cfg_inner.get("max_position_usd", 500))
     mirror_scale = float(wallet_cfg_inner.get("mirror_scale", 0.08))
     min_score = int(settings.get("watchlist", {}).get("min_score_to_mirror", 65))
-    mode = settings.get("mode", "paper")
+    mode = os.environ.get("BOT_MODE") or settings.get("mode", "paper")
 
     scorer = WalletScorer(wallet_tiers, min_score)
     risk_gate = RiskGate(max_position_usd=max_pos, min_score=min_score, slippage_tiers=slippage_tiers)
