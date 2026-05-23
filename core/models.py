@@ -12,23 +12,25 @@ class Chain(Enum):
 
 
 class WalletTier(Enum):
-    S = "S"   # Top tier
+    S = "S"
     A = "A"
     B = "B"
-    WATCH = "Watch"  # Monitor only, no mirror
+    WATCH = "Watch"
 
 
 @dataclass(slots=True)
 class DetectedSwap:
-    """A swap detected from a watched wallet. slots=True reduces memory footprint."""
+    """A swap detected from a watched wallet."""
     chain: Chain
     wallet_address: str
     tx_hash: str
     block_slot: Optional[int] = None
     block_number: Optional[int] = None
-    from_token: str = ""
+    from_token: str = ""        # display label e.g. "SOL"
+    from_mint: str = ""         # full mint address for execution
     from_amount: float = 0.0
-    to_token: str = ""
+    to_token: str = ""          # display label
+    to_mint: str = ""           # full mint address for execution
     to_amount: float = 0.0
     from_amount_usd: float = 0.0
     to_amount_usd: float = 0.0
@@ -41,7 +43,6 @@ class DetectedSwap:
 
 @dataclass
 class MirrorDecision:
-    """Risk gate output: approve or reject mirror."""
     approved: bool
     reason: str = ""
     scaled_from_amount: float = 0.0
@@ -51,7 +52,6 @@ class MirrorDecision:
 
 @dataclass
 class MirrorResult:
-    """Result of a mirror execution (paper or live)."""
     success: bool
     tx_hash: str = ""
     chain: Chain = Chain.SOLANA
@@ -69,7 +69,6 @@ class MirrorResult:
 
 @dataclass
 class WalletScore:
-    """Wallet quality score (0-100)."""
     address: str
     chain: Chain
     score: int
